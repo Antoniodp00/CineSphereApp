@@ -7,7 +7,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.proyecto.cinesphereapp.MainActivity
+
 
 import com.proyecto.cinesphereapp.R
 import com.proyecto.cinesphereapp.data.db.UsuarioDao

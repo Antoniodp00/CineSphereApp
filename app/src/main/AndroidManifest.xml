@@ -14,6 +14,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CineSphereApp">
         <activity
+            android:name=".ui.DetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.SettingsFragment"
+            android:exported="false" />
+        <activity
+            android:name=".ui.StatsFragment"
+            android:exported="false" />
+        <activity
+            android:name=".ui.HomeFragment"
+            android:exported="false" />
+        <activity
             android:name=".ui.MyListFragment"
             android:exported="false" />
         <activity
@@ -29,7 +41,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.RegisterActivity" />
-        <activity android:name=".MainActivity" />
     </application>
 
 </manifest>

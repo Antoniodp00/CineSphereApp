@@ -18,21 +18,21 @@ class MyListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflamos un layout simple que solo tenga un RecyclerView
-        // Puedes crear 'fragment_simple_list.xml' o hacerlo programáticamente.
-        // Aquí usaremos un layout XML nuevo para ser ordenados.
-        return inflater.inflate(R.layout.fragment_mylist, container, false)
+        // Inflamos el layout específico para este fragmento
+        return inflater.inflate(R.layout.activity_my_list_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val rv = view.findViewById<RecyclerView>(R.id.rvLocalMovies)
+        // Asegúrate de que tu XML tiene un TextView con id tvEmpty para mostrar mensaje si no hay pelis
+        // Si no lo tienes en el XML que subiste, puedes quitar estas líneas del tvEmpty por ahora
         val tvEmpty = view.findViewById<TextView>(R.id.tvEmpty)
 
         rv.layoutManager = GridLayoutManager(context, 2)
 
-        // 1. Obtener ID del usuario actual
+        // 1. Obtener ID del usuario actual desde SharedPreferences
         val prefs = requireContext().getSharedPreferences("CineSpherePrefs", Context.MODE_PRIVATE)
         val userId = prefs.getInt("USER_ID", -1)
 
@@ -40,14 +40,20 @@ class MyListFragment : Fragment() {
         val dao = MiListaDao(requireContext())
         val lista = dao.obtenerListaUsuario(userId)
 
-        // 3. Mostrar datos
+        // 3. Mostrar datos o mensaje de vacío
         if (lista.isEmpty()) {
             rv.visibility = View.GONE
-            tvEmpty.visibility = View.VISIBLE
+            tvEmpty?.visibility = View.VISIBLE
         } else {
             rv.visibility = View.VISIBLE
-            tvEmpty.visibility = View.GONE
+            tvEmpty?.visibility = View.GONE
             rv.adapter = LocalMovieAdapter(lista)
         }
+    }
+
+    // Método para recargar la lista si volvemos a esta pantalla (opcional pero recomendado)
+    override fun onResume() {
+        super.onResume()
+        // Aquí podrías volver a llamar a la carga de datos si quieres que se actualice al volver
     }
 }

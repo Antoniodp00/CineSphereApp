@@ -2,7 +2,6 @@ package com.proyecto.cinesphereapp.data.db
 
 import android.content.ContentValues
 import android.content.Context
-import android.database.Cursor
 import com.proyecto.cinesphereapp.model.CineSphereContract.MiListaEntry
 import com.proyecto.cinesphereapp.model.PeliculaLocal
 
@@ -11,16 +10,15 @@ class MiListaDao(context: Context) {
 
     /**
      * Guarda una película en la lista del usuario.
-     * Si ya existe, no hace nada (o podrías actualizar el estado).
+     * @return el ID de la fila insertada, o -1 si ya existe.
      */
     fun agregarPelicula(userId: Int, movieId: Int, titulo: String, poster: String, estado: String = "PENDIENTE"): Long {
-        // Primero verificamos si ya existe para evitar duplicados
+        // 1. Evitar duplicados
         if (existePelicula(userId, movieId)) {
             return -1
         }
 
         val db = dbHelper.writableDatabase
-
         val values = ContentValues().apply {
             put(MiListaEntry.COLUMN_USER_ID, userId)
             put(MiListaEntry.COLUMN_MOVIE_ID, movieId)
@@ -33,7 +31,7 @@ class MiListaDao(context: Context) {
     }
 
     /**
-     * Elimina una película de la lista del usuario.
+     * Elimina una película de la lista.
      */
     fun eliminarPelicula(userId: Int, movieId: Int): Int {
         val db = dbHelper.writableDatabase
@@ -44,7 +42,7 @@ class MiListaDao(context: Context) {
     }
 
     /**
-     * Obtiene todas las películas guardadas por un usuario específico.
+     * Obtiene la lista completa de películas guardadas por un usuario.
      */
     fun obtenerListaUsuario(userId: Int): List<PeliculaLocal> {
         val db = dbHelper.readableDatabase
@@ -63,6 +61,60 @@ class MiListaDao(context: Context) {
 
         with(cursor) {
             while (moveToNext()) {
-                val p = PeliculaLocal(
-                    id = getInt(getColumnIndexOrThrow(MiListaEntry.COLUMN_MOVIE_ID)),
-                    titulo = getString(getColumnIndex
+                // Recuperamos los datos usando los nombres de columna del contrato
+                val id = getInt(getColumnIndexOrThrow(MiListaEntry.COLUMN_MOVIE_ID))
+                val titulo = getString(getColumnIndexOrThrow(MiListaEntry.COLUMN_TITLE))
+                val poster = getString(getColumnIndexOrThrow(MiListaEntry.COLUMN_POSTER))
+                val estado = getString(getColumnIndexOrThrow(MiListaEntry.COLUMN_ESTADO))
+
+                lista.add(PeliculaLocal(id, titulo, poster, estado))
+            }
+            close()
+        }
+        return lista
+    }
+
+    /**
+     * Verifica si una película ya está guardada por ese usuario.
+     */
+    fun existePelicula(userId: Int, movieId: Int): Boolean {
+        val db = dbHelper.readableDatabase
+        val cursor = db.rawQuery(
+            "SELECT 1 FROM ${MiListaEntry.TABLE_NAME} WHERE ${MiListaEntry.COLUMN_USER_ID} = ? AND ${MiListaEntry.COLUMN_MOVIE_ID} = ?",
+            arrayOf(userId.toString(), movieId.toString())
+        )
+        val existe = cursor.count > 0
+        cursor.close()
+        return existe
+    }
+
+    // --- MÉTODOS PARA ESTADÍSTICAS ---
+
+    fun contarPeliculas(userId: Int): Int {
+        val db = dbHelper.readableDatabase
+        val cursor = db.rawQuery(
+            "SELECT COUNT(*) FROM ${MiListaEntry.TABLE_NAME} WHERE ${MiListaEntry.COLUMN_USER_ID} = ?",
+            arrayOf(userId.toString())
+        )
+        var count = 0
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0)
+        }
+        cursor.close()
+        return count
+    }
+
+    fun contarPorEstado(userId: Int, estado: String): Int {
+        val db = dbHelper.readableDatabase
+        val cursor = db.rawQuery(
+            "SELECT COUNT(*) FROM ${MiListaEntry.TABLE_NAME} WHERE ${MiListaEntry.COLUMN_USER_ID} = ? AND ${MiListaEntry.COLUMN_ESTADO} = ?",
+            arrayOf(userId.toString(), estado)
+        )
+        var count = 0
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0)
+        }
+        cursor.close()
+        return count
+    }
+}
