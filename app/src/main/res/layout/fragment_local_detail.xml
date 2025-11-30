@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#141414"
+    android:background="@color/cine_background"
     android:padding="16dp">
 
     <LinearLayout
@@ -12,42 +13,43 @@
         android:orientation="vertical"
         android:gravity="center_horizontal">
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
+            style="@style/CineCardView"
             android:layout_width="200dp"
             android:layout_height="300dp"
-            app:cardCornerRadius="12dp"
             android:layout_marginBottom="24dp">
             <ImageView
                 android:id="@+id/ivLocalPoster"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                android:src="@android:drawable/ic_menu_gallery"/>
-        </androidx.cardview.widget.CardView>
+                tools:src="@tools:sample/backgrounds/scenic"/>
+        </com.google.android.material.card.MaterialCardView>
 
         <TextView
             android:id="@+id/tvLocalTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Título Película"
-            android:textColor="#FFF"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="26sp"
             android:textStyle="bold"
             android:gravity="center"
-            android:layout_marginBottom="32dp"/>
+            android:layout_marginBottom="32dp"
+            tools:text="Título Película"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Estado de visualización:"
-            android:textColor="#AAA"
+            android:textColor="?attr/colorOnSurfaceVariant"
             android:layout_marginBottom="8dp"/>
 
         <Spinner
             android:id="@+id/spEstado"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:background="@android:drawable/btn_dropdown"
+            android:background="@drawable/abc_spinner_textfield_background_material"
+            android:backgroundTint="?attr/colorSurface"
             android:layout_marginBottom="32dp"/>
 
         <Button
@@ -55,7 +57,7 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:text="Guardar Cambios"
-            android:backgroundTint="#3fa9f5"
+            android:backgroundTint="?attr/colorPrimary"
             android:layout_marginBottom="12dp"/>
 
         <Button
@@ -63,7 +65,7 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:text="Eliminar de Mi Lista"
-            android:backgroundTint="#D32F2F"/>
+            android:backgroundTint="?attr/colorError"/>
 
     </LinearLayout>
 </ScrollView>

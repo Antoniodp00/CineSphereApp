@@ -1,10 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.SettingsFragment">
+    android:orientation="vertical"
+    android:background="@color/cine_background"
+    android:padding="24dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ajustes"
+        android:textColor="?attr/colorOnSurface"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="32dp"/>
+
+    <TextView
+        android:id="@+id/tvAbout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Acerca de CineSphere"
+        android:textColor="?attr/colorOnSurface"
+        android:textSize="18sp"
+        android:background="?attr/selectableItemBackground"
+        android:paddingVertical="16dp"
+        android:drawableEnd="@android:drawable/ic_menu_info_details"
+        app:drawableTint="?attr/colorOnSurfaceVariant"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/cine_borders"/>
+
+    <TextView
+        android:id="@+id/tvLogout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cerrar Sesión"
+        android:textColor="?attr/colorError"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:background="?attr/selectableItemBackground"
+        android:paddingVertical="16dp"
+        android:layout_marginTop="8dp"
+        android:drawableEnd="@android:drawable/ic_lock_power_off"
+        app:drawableTint="?attr/colorError"/>
+
+</LinearLayout>

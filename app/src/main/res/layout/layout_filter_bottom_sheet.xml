@@ -4,49 +4,57 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="24dp"
-    android:background="@android:color/white"> <TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Filtrar Películas"
-    android:textSize="20sp"
-    android:textStyle="bold"
-    android:layout_marginBottom="16dp"
-    android:textColor="#000000"/>
+    android:background="?attr/colorSurface">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Filtrar Películas"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp"
+        android:textColor="?attr/colorOnSurface"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Año de lanzamiento"
+        android:textColor="?attr/colorOnSurfaceVariant"
         android:layout_marginBottom="4dp"/>
     <Spinner
         android:id="@+id/spSheetYear"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@android:drawable/btn_dropdown"
+        android:background="@drawable/abc_spinner_textfield_background_material"
+        android:backgroundTint="?attr/colorSurface"
         android:layout_marginBottom="12dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Puntuación mínima"
+        android:textColor="?attr/colorOnSurfaceVariant"
         android:layout_marginBottom="4dp"/>
     <Spinner
         android:id="@+id/spSheetRating"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@android:drawable/btn_dropdown"
+        android:background="@drawable/abc_spinner_textfield_background_material"
+        android:backgroundTint="?attr/colorSurface"
         android:layout_marginBottom="12dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Género"
+        android:textColor="?attr/colorOnSurfaceVariant"
         android:layout_marginBottom="4dp"/>
     <Spinner
         android:id="@+id/spSheetGenre"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@android:drawable/btn_dropdown"
+        android:background="@drawable/abc_spinner_textfield_background_material"
+        android:backgroundTint="?attr/colorSurface"
         android:layout_marginBottom="24dp"/>
 
     <LinearLayout
@@ -55,20 +63,20 @@
         android:orientation="horizontal"
         android:gravity="end">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSheetClear"
+            style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Limpiar"
-            android:backgroundTint="#D32F2F"
+            android:textColor="?attr/colorError"
             android:layout_marginEnd="8dp"/>
 
         <Button
             android:id="@+id/btnSheetApply"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Aplicar Filtros"
-            android:backgroundTint="#3fa9f5"/>
+            android:text="Aplicar Filtros"/>
     </LinearLayout>
 
 </LinearLayout>

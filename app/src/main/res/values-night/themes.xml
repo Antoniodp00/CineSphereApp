@@ -1,16 +1,27 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Theme.CineSphereApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_200</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/black</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_200</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tema Principal de la Aplicación (Oscuro) -->
+    <style name="Theme.CineSphere" parent="Theme.Material3.Dark.NoActionBar">
+        <!-- Mapeo de Colores Primarios -->
+        <item name="colorPrimary">@color/cine_primary</item>
+        <item name="colorPrimaryVariant">@color/cine_primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <!-- Mapeo de Colores de Superficie y Fondo -->
+        <item name="android:colorBackground">@color/cine_background</item>
+        <item name="colorSurface">@color/cine_surface</item>
+        <item name="colorOnBackground">@color/cine_text_primary</item>
+        <item name="colorOnSurface">@color/cine_text_primary</item>
+        <item name="colorOnSurfaceVariant">@color/cine_text_secondary</item>
+
+        <!-- Color de la Barra de Estado -->
+        <item name="android:statusBarColor">?attr/colorSurface</item>
+
+        <!-- Mapeo de Colores de Error -->
+        <item name="colorError">@color/cine_error</item>
+        <item name="colorOnError">@color/white</item>
+
+        <!-- Estilo de las CardViews por defecto -->
+        <item name="cardViewStyle">@style/CineCardView</item>
     </style>
 </resources>

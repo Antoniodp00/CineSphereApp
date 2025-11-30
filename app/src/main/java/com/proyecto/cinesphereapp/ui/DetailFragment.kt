@@ -17,6 +17,9 @@ import com.bumptech.glide.Glide
 import com.proyecto.cinesphereapp.R
 import com.proyecto.cinesphereapp.data.db.MiListaDao
 
+/**
+ * Fragmento que muestra los detalles de una película.
+ */
 class DetailFragment : Fragment() {
 
     companion object {
@@ -27,6 +30,16 @@ class DetailFragment : Fragment() {
         private const val ARG_RATING = "arg_rating"
         private const val ARG_DATE = "arg_date"
 
+        /**
+         * Crea una nueva instancia de DetailFragment.
+         * @param id El ID de la película.
+         * @param title El título de la película.
+         * @param poster La URL del póster de la película.
+         * @param overview La sinopsis de la película.
+         * @param rating La calificación de la película.
+         * @param date La fecha de lanzamiento de la película.
+         * @return Una nueva instancia de DetailFragment.
+         */
         fun newInstance(id: Int, title: String, poster: String?, overview: String?, rating: Double, date: String?): DetailFragment {
             val f = DetailFragment()
             f.arguments = Bundle().apply {
@@ -49,6 +62,10 @@ class DetailFragment : Fragment() {
         ViewModelProvider(this)[DetailViewModel::class.java]
     }
 
+    /**
+     * Se llama cuando se crea el fragmento.
+     * @param savedInstanceState Si el fragmento se está recreando a partir de un estado guardado anteriormente, este es el estado.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         dao = MiListaDao(requireContext())
@@ -67,12 +84,24 @@ class DetailFragment : Fragment() {
         }
     }
 
+    /**
+     * Se llama para que el fragmento instancie su vista de interfaz de usuario.
+     * @param inflater El LayoutInflater que se puede usar para inflar cualquier vista en el fragmento.
+     * @param container Si no es nulo, esta es la vista principal a la que se debe adjuntar la interfaz de usuario del fragmento.
+     * @param savedInstanceState Si no es nulo, este fragmento se está reconstruyendo a partir de un estado guardado anterior.
+     * @return Devuelve la Vista para la interfaz de usuario del fragmento, o nulo.
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_detail, container, false)
     }
 
+    /**
+     * Se llama inmediatamente después de que onCreateView() haya devuelto, pero antes de que se haya restaurado cualquier estado guardado en la vista.
+     * @param view La vista devuelta por onCreateView().
+     * @param savedInstanceState Si no es nulo, este fragmento se está reconstruyendo a partir de un estado guardado anterior.
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -108,16 +137,25 @@ class DetailFragment : Fragment() {
         }
     }
 
+    /**
+     * Se llama cuando el fragmento se vuelve visible para el usuario.
+     */
     override fun onResume() {
         super.onResume()
         (activity as? MainActivity)?.showBottomNav(false)
     }
 
+    /**
+     * Se llama cuando la vista asociada con el fragmento está siendo destruida.
+     */
     override fun onDestroyView() {
         super.onDestroyView()
         (activity as? MainActivity)?.showBottomNav(true)
     }
 
+    /**
+     * Comprueba si la película ya está en la lista del usuario.
+     */
     private fun checkIfMovieIsAdded() {
         Thread {
             val exists = dao.existePelicula(userId, vm.movieId)
@@ -129,6 +167,9 @@ class DetailFragment : Fragment() {
         }.start()
     }
 
+    /**
+     * Actualiza la interfaz de usuario del botón de añadir/eliminar de la lista.
+     */
     private fun updateButtonUI() {
         if (!isAdded) return
         if (vm.isAdded) {
@@ -140,6 +181,9 @@ class DetailFragment : Fragment() {
         }
     }
 
+    /**
+     * Añade la película a la lista del usuario.
+     */
     private fun anadirALista() {
         Thread {
             val result = dao.agregarPelicula(userId, vm.movieId, vm.movieTitle, vm.moviePoster)
@@ -155,6 +199,9 @@ class DetailFragment : Fragment() {
         }.start()
     }
 
+    /**
+     * Elimina la película de la lista del usuario.
+     */
     private fun eliminarDeLista() {
         Thread {
             val rows = dao.eliminarPelicula(userId, vm.movieId)
@@ -169,6 +216,9 @@ class DetailFragment : Fragment() {
     }
 }
 
+/**
+ * ViewModel para DetailFragment. Almacena los detalles de la película y el estado de la interfaz de usuario.
+ */
 class DetailViewModel : ViewModel() {
     var initialized: Boolean = false
     var movieId: Int = 0

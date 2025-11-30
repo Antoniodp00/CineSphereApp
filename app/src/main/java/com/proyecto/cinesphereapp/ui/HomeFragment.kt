@@ -17,6 +17,11 @@ import com.proyecto.cinesphereapp.data.network.RetrofitClient
 import com.proyecto.cinesphereapp.model.GenreDto
 import kotlinx.coroutines.launch
 
+/**
+ * Fragmento principal que muestra una lista de películas populares.
+ * Permite al usuario buscar películas, filtrarlas por año, calificación y género.
+ * Implementa paginación para cargar más películas al hacer scroll.
+ */
 class HomeFragment : Fragment() {
 
     // UI Components
@@ -48,6 +53,13 @@ class HomeFragment : Fragment() {
     private var lastRating: String? = null
     private var lastGenre: String? = null
 
+    /**
+     * Se llama para que el fragmento instancie su vista de interfaz de usuario.
+     * @param inflater El LayoutInflater que se puede usar para inflar cualquier vista en el fragmento.
+     * @param container Si no es nulo, esta es la vista principal a la que se debe adjuntar la interfaz de usuario del fragmento.
+     * @param savedInstanceState Si no es nulo, este fragmento se está reconstruyendo a partir de un estado guardado anterior.
+     * @return Devuelve la Vista para la interfaz de usuario del fragmento, o nulo.
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -55,6 +67,11 @@ class HomeFragment : Fragment() {
         return inflater.inflate(R.layout.activity_home_fragment, container, false)
     }
 
+    /**
+     * Se llama inmediatamente después de que onCreateView() haya devuelto, pero antes de que se haya restaurado cualquier estado guardado en la vista.
+     * @param view La vista devuelta por onCreateView().
+     * @param savedInstanceState Si no es nulo, este fragmento se está reconstruyendo a partir de un estado guardado anterior.
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -80,6 +97,10 @@ class HomeFragment : Fragment() {
         }
     }
 
+    /**
+     * Inicializa las vistas de la interfaz de usuario.
+     * @param view La vista raíz del fragmento.
+     */
     private fun initViews(view: View) {
         rvMovies = view.findViewById(R.id.rvMovies)
         etSearch = view.findViewById(R.id.etSearch)
@@ -87,6 +108,9 @@ class HomeFragment : Fragment() {
         fabFilter = view.findViewById(R.id.fabFilter)
     }
 
+    /**
+     * Configura el RecyclerView, incluyendo su layout manager, adaptador y el listener de scroll para paginación.
+     */
     private fun setupRecyclerView() {
         val layoutManager = GridLayoutManager(requireContext(), 2)
         rvMovies.layoutManager = layoutManager
@@ -131,7 +155,9 @@ class HomeFragment : Fragment() {
         })
     }
 
-    // --- LÓGICA DEL BOTTOM SHEET (Filtros) ---
+    /**
+     * Muestra un BottomSheetDialog con opciones de filtro (año, calificación, género).
+     */
     private fun showFilterBottomSheet() {
         val dialog = BottomSheetDialog(requireContext())
         val view = layoutInflater.inflate(R.layout.layout_filter_bottom_sheet, null)
@@ -185,6 +211,9 @@ class HomeFragment : Fragment() {
         dialog.show()
     }
 
+    /**
+     * Carga la lista de géneros desde la API de TMDB en segundo plano.
+     */
     private fun loadGenres() {
         lifecycleScope.launch {
             try {
@@ -196,8 +225,19 @@ class HomeFragment : Fragment() {
         }
     }
 
+    /**
+     * Enum para definir el tipo de carga de películas.
+     */
     enum class TipoCarga { POPULARES, BUSQUEDA, FILTRO }
 
+    /**
+     * Reinicia el estado de la paginación y carga la primera página de películas según el tipo de carga.
+     * @param tipo El tipo de carga (populares, búsqueda, filtro).
+     * @param query El término de búsqueda (si aplica).
+     * @param year El año de lanzamiento (si aplica).
+     * @param rating La calificación mínima (si aplica).
+     * @param genre El ID del género (si aplica).
+     */
     private fun resetAndLoad(tipo: TipoCarga, query: String = "", year: String? = null, rating: String? = null, genre: String? = null) {
         lastTipo = tipo
         lastQuery = query
@@ -212,12 +252,20 @@ class HomeFragment : Fragment() {
         loadMoviesPage(currentPage)
     }
 
+    /**
+     * Carga la siguiente página de películas si no se está cargando y no es la última página.
+     */
     private fun loadNextPage() {
         if (isLoading || isLastPage) return
         val next = currentPage + 1
         loadMoviesPage(next)
     }
 
+    /**
+     * Carga una página específica de películas desde la API.
+     * Actualiza el adaptador y el estado de paginación.
+     * @param page El número de página a cargar.
+     */
     private fun loadMoviesPage(page: Int) {
         isLoading = true
         lifecycleScope.launch {

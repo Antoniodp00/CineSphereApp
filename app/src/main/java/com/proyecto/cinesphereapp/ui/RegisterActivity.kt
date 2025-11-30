@@ -8,10 +8,19 @@ import androidx.appcompat.app.AppCompatActivity
 import com.proyecto.cinesphereapp.R
 import com.proyecto.cinesphereapp.data.db.UsuarioDao
 
+/**
+ * Actividad para el registro de nuevos usuarios.
+ * Permite a un usuario crear una nueva cuenta proporcionando un nombre de usuario, correo electrónico y contraseña.
+ */
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var usuarioDao: UsuarioDao
 
+    /**
+     * Se llama cuando se crea la actividad.
+     * Inicializa la interfaz de usuario, la base de datos y configura el listener del botón de registro.
+     * @param savedInstanceState Si la actividad se está recreando a partir de un estado guardado anteriormente, este es el estado.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)

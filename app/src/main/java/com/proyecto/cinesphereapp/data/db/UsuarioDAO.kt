@@ -5,10 +5,21 @@ import android.content.Context
 import android.provider.BaseColumns
 import com.proyecto.cinesphereapp.model.CineSphereContract.UsuarioEntry
 
+/**
+ * DAO (Data Access Object) para la entidad Usuario.
+ * Proporciona métodos para registrar y autenticar usuarios en la base de datos.
+ * @param context El contexto de la aplicación.
+ */
 class UsuarioDao(context: Context) {
     private val dbHelper = CineSphereDbHelper(context)
 
-    // --- MÉTODO REGISTRAR (INSERT) ---
+    /**
+     * Registra un nuevo usuario en la base de datos.
+     * @param nombre El nombre de usuario.
+     * @param email El correo electrónico del usuario.
+     * @param pass La contraseña del usuario.
+     * @return El ID de la nueva fila insertada, o -1 si hubo un error (por ejemplo, si el nombre de usuario ya existe debido a una restricción UNIQUE).
+     */
     fun registrar(nombre: String, email: String, pass: String): Long {
         // Obtenemos la base de datos en modo escritura
         val db = dbHelper.writableDatabase
@@ -24,7 +35,12 @@ class UsuarioDao(context: Context) {
         return db.insert(UsuarioEntry.TABLE_NAME, null, values)
     }
 
-    // --- MÉTODO LOGIN (SELECT) ---
+    /**
+     * Valida las credenciales de un usuario.
+     * @param nombre El nombre de usuario a autenticar.
+     * @param pass La contraseña a verificar.
+     * @return El ID del usuario si las credenciales son correctas, de lo contrario, null.
+     */
     fun login(nombre: String, pass: String): Int? {
         val db = dbHelper.readableDatabase
 

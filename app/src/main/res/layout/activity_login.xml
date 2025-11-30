@@ -13,7 +13,7 @@
         android:text="CineSphere"
         android:textSize="32sp"
         android:textStyle="bold"
-        android:textColor="@color/purple_500"
+        android:textColor="?attr/colorPrimary"
         android:layout_marginBottom="48dp"/>
 
     <EditText
@@ -43,6 +43,6 @@
         android:layout_height="wrap_content"
         android:text="¿No tienes cuenta? Regístrate aquí"
         android:layout_marginTop="16dp"
-        android:textColor="@color/teal_700"/>
+        android:textColor="?attr/colorPrimary"/>
 
 </LinearLayout>

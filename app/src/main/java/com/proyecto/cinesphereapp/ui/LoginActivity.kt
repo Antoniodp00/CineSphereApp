@@ -12,10 +12,20 @@ import androidx.appcompat.app.AppCompatActivity
 import com.proyecto.cinesphereapp.R
 import com.proyecto.cinesphereapp.data.db.UsuarioDao
 
+/**
+ * Actividad para el inicio de sesión de usuario.
+ * Permite al usuario ingresar sus credenciales para acceder a la aplicación.
+ * También proporciona un enlace a la pantalla de registro.
+ */
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var usuarioDao: UsuarioDao
 
+    /**
+     * Se llama cuando se crea la actividad.
+     * Inicializa la interfaz de usuario, la base de datos y configura los listeners de los botones.
+     * @param savedInstanceState Si la actividad se está recreando a partir de un estado guardado anteriormente, este es el estado.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)

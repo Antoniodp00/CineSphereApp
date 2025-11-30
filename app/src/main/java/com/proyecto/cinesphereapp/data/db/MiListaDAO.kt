@@ -7,11 +7,21 @@ import com.proyecto.cinesphereapp.model.CineSphereContract.MiListaEntry
 import com.proyecto.cinesphereapp.model.PeliculaLocal
 import android.provider.BaseColumns
 
+/**
+ * DAO (Data Access Object) para interactuar con la tabla `mi_lista`.
+ * Proporciona métodos para agregar, eliminar, obtener y actualizar películas en la lista de un usuario.
+ * @param context El contexto de la aplicación.
+ */
 class MiListaDao(context: Context) {
     private val dbHelper = CineSphereDbHelper(context)
 
     /**
      * Guarda una película en la lista del usuario.
+     * @param userId El ID del usuario.
+     * @param movieId El ID de la película.
+     * @param titulo El título de la película.
+     * @param poster La ruta del póster de la película.
+     * @param estado El estado inicial de la película (por defecto "PENDIENTE").
      * @return el ID de la fila insertada, o -1 si ya existe.
      */
     fun agregarPelicula(userId: Int, movieId: Int, titulo: String, poster: String, estado: String = "PENDIENTE"): Long {
@@ -33,7 +43,10 @@ class MiListaDao(context: Context) {
     }
 
     /**
-     * Elimina una película de la lista.
+     * Elimina una película de la lista de un usuario.
+     * @param userId El ID del usuario.
+     * @param movieId El ID de la película.
+     * @return El número de filas eliminadas.
      */
     fun eliminarPelicula(userId: Int, movieId: Int): Int {
         val db = dbHelper.writableDatabase
@@ -45,6 +58,8 @@ class MiListaDao(context: Context) {
 
     /**
      * Obtiene la lista completa de películas guardadas por un usuario (sin paginar).
+     * @param userId El ID del usuario.
+     * @return Una lista de objetos [PeliculaLocal].
      */
     fun obtenerListaUsuario(userId: Int): List<PeliculaLocal> {
         val db = dbHelper.readableDatabase
@@ -77,6 +92,10 @@ class MiListaDao(context: Context) {
 
     /**
      * Obtiene una página de películas guardadas por un usuario, ordenadas por _id DESC.
+     * @param userId El ID del usuario.
+     * @param limit El número máximo de películas a devolver.
+     * @param offset El número de películas a saltar.
+     * @return Una lista paginada de objetos [PeliculaLocal].
      */
     fun obtenerListaUsuarioPaginado(userId: Int, limit: Int, offset: Int): List<PeliculaLocal> {
         val db = dbHelper.readableDatabase
@@ -100,6 +119,9 @@ class MiListaDao(context: Context) {
 
     /**
      * Verifica si una película ya está guardada por ese usuario.
+     * @param userId El ID del usuario.
+     * @param movieId El ID de la película.
+     * @return `true` si la película existe, `false` en caso contrario.
      */
     fun existePelicula(userId: Int, movieId: Int): Boolean {
         val db = dbHelper.readableDatabase
@@ -112,8 +134,11 @@ class MiListaDao(context: Context) {
         return existe
     }
 
-    // --- MÉTODOS PARA ESTADÍSTICAS ---
-
+    /**
+     * Cuenta el número total de películas en la lista de un usuario.
+     * @param userId El ID del usuario.
+     * @return El número total de películas.
+     */
     fun contarPeliculas(userId: Int): Int {
         val db = dbHelper.readableDatabase
         val cursor = db.rawQuery(
@@ -128,6 +153,12 @@ class MiListaDao(context: Context) {
         return count
     }
 
+    /**
+     * Cuenta el número de películas en la lista de un usuario con un estado específico.
+     * @param userId El ID del usuario.
+     * @param estado El estado de la película a contar.
+     * @return El número de películas con el estado especificado.
+     */
     fun contarPorEstado(userId: Int, estado: String): Int {
         val db = dbHelper.readableDatabase
         val cursor = db.rawQuery(
@@ -144,6 +175,9 @@ class MiListaDao(context: Context) {
 
     /**
      * Actualiza el estado de una película (ej: de "PENDIENTE" a "VISTO").
+     * @param userId El ID del usuario.
+     * @param movieId El ID de la película.
+     * @param nuevoEstado El nuevo estado de la película.
      */
     fun actualizarEstado(userId: Int, movieId: Int, nuevoEstado: String) {
         val db = dbHelper.writableDatabase

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#141414"
+    android:background="@color/cine_background"
     android:fitsSystemWindows="true">
 
     <LinearLayout
@@ -13,21 +13,19 @@
         android:orientation="vertical"
         android:paddingBottom="24dp">
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
+            style="@style/CineCardView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="8dp"
-            app:cardBackgroundColor="#262626">
+            android:layout_margin="16dp">
 
             <ImageView
                 android:id="@+id/ivDetailPoster"
                 android:layout_width="match_parent"
                 android:layout_height="450dp"
                 android:scaleType="centerCrop"
-                android:src="@android:drawable/ic_menu_gallery" />
-        </androidx.cardview.widget.CardView>
+                tools:src="@tools:sample/backgrounds/scenic" />
+        </com.google.android.material.card.MaterialCardView>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -39,11 +37,11 @@
                 android:id="@+id/tvDetailTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Título de la Película"
-                android:textColor="#FFFFFF"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="28sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="8dp"
+                tools:text="Título de la Película" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -56,19 +54,19 @@
                     android:id="@+id/tvDetailRating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="★ 8.5"
-                    android:textColor="#FFC107"
+                    android:textColor="@color/cine_rating_star"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:layout_marginEnd="16dp"/>
+                    android:layout_marginEnd="16dp"
+                    tools:text="★ 8.5"/>
 
                 <TextView
                     android:id="@+id/tvDetailDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="2023-07-21"
-                    android:textColor="#AAAAAA"
-                    android:textSize="16sp"/>
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textSize="16sp"
+                    tools:text="2023-07-21"/>
             </LinearLayout>
 
             <Button
@@ -76,8 +74,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
                 android:text="@string/add_to_list"
-                android:backgroundTint="#3fa9f5"
-                android:textColor="#000000"
+                android:backgroundTint="?attr/colorPrimary"
+                android:textColor="?attr/colorOnPrimary"
                 android:textStyle="bold"
                 android:layout_marginBottom="24dp"/>
 
@@ -85,7 +83,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Sinopsis"
-                android:textColor="#3fa9f5"
+                android:textColor="?attr/colorPrimary"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="8dp"/>
@@ -94,10 +92,10 @@
                 android:id="@+id/tvDetailOverview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Descripción de la película..."
-                android:textColor="#DDDDDD"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="16sp"
-                android:lineSpacingExtra="4dp"/>
+                android:lineSpacingExtra="4dp"
+                tools:text="Descripción de la película..."/>
 
         </LinearLayout>
     </LinearLayout>

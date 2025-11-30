@@ -13,6 +13,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.proyecto.cinesphereapp.R
 import com.proyecto.cinesphereapp.data.db.MiListaDao
 
+/**
+ * Fragmento que muestra la lista de películas guardadas por el usuario.
+ * Las películas se cargan desde la base de datos local y se muestran en un RecyclerView.
+ * Implementa paginación para cargar más películas al hacer scroll.
+ */
 class MyListFragment : Fragment() {
 
     private lateinit var rv: RecyclerView
@@ -26,6 +31,13 @@ class MyListFragment : Fragment() {
 
     private var userId: Int = -1
 
+    /**
+     * Se llama para que el fragmento instancie su vista de interfaz de usuario.
+     * @param inflater El LayoutInflater que se puede usar para inflar cualquier vista en el fragmento.
+     * @param container Si no es nulo, esta es la vista principal a la que se debe adjuntar la interfaz de usuario del fragmento.
+     * @param savedInstanceState Si no es nulo, este fragmento se está reconstruyendo a partir de un estado guardado anterior.
+     * @return Devuelve la Vista para la interfaz de usuario del fragmento, o nulo.
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -33,6 +45,11 @@ class MyListFragment : Fragment() {
         return inflater.inflate(R.layout.activity_my_list_fragment, container, false)
     }
 
+    /**
+     * Se llama inmediatamente después de que onCreateView() haya devuelto, pero antes de que se haya restaurado cualquier estado guardado en la vista.
+     * @param view La vista devuelta por onCreateView().
+     * @param savedInstanceState Si no es nulo, este fragmento se está reconstruyendo a partir de un estado guardado anterior.
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -97,6 +114,9 @@ class MyListFragment : Fragment() {
         resetAndLoad()
     }
 
+    /**
+     * Reinicia el estado de paginación y carga la primera página de películas.
+     */
     private fun resetAndLoad() {
         isLoading = false
         isLastPage = false
@@ -105,11 +125,18 @@ class MyListFragment : Fragment() {
         loadPage(0)
     }
 
+    /**
+     * Carga la siguiente página de películas.
+     */
     private fun loadNextPage() {
         if (isLoading || isLastPage) return
         loadPage(currentOffset)
     }
 
+    /**
+     * Carga una página de películas desde la base de datos local.
+     * @param offset El desplazamiento desde el que empezar a cargar.
+     */
     private fun loadPage(offset: Int) {
         isLoading = true
         Thread {
@@ -143,6 +170,10 @@ class MyListFragment : Fragment() {
         }.start()
     }
 
+    /**
+     * Se llama cuando el fragmento se vuelve visible para el usuario.
+     * Refresca la lista de películas por si ha habido cambios.
+     */
     override fun onResume() {
         super.onResume()
         // Refresca al volver por si se actualizó o eliminó algo en el detalle
