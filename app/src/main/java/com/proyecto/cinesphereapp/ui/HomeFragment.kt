@@ -35,11 +35,23 @@ class HomeFragment : Fragment() {
     private var selectedRatingPosition: Int = 0
     private var selectedGenrePosition: Int = 0
 
+    // Paginación
+    private var isLoading = false
+    private var isLastPage = false
+    private var currentPage = 1
+    private var totalPages: Int? = null
+
+    // Contexto de la última carga para soportar scroll infinito con búsqueda/filtros
+    private var lastTipo: TipoCarga = TipoCarga.POPULARES
+    private var lastQuery: String = ""
+    private var lastYear: String? = null
+    private var lastRating: String? = null
+    private var lastGenre: String? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflamos el layout específico del fragmento
         return inflater.inflate(R.layout.activity_home_fragment, container, false)
     }
 
@@ -50,20 +62,19 @@ class HomeFragment : Fragment() {
         setupRecyclerView()
 
         // Carga inicial
-        loadMovies(TipoCarga.POPULARES)
+        resetAndLoad(TipoCarga.POPULARES)
         loadGenres() // Cargar géneros en segundo plano
 
         // Eventos Principales
         btnSearch.setOnClickListener {
             val query = etSearch.text.toString()
             if (query.isNotEmpty()) {
-                loadMovies(TipoCarga.BUSQUEDA, query = query)
+                resetAndLoad(TipoCarga.BUSQUEDA, query = query)
             } else {
-                loadMovies(TipoCarga.POPULARES)
+                resetAndLoad(TipoCarga.POPULARES)
             }
         }
 
-        // Evento del Botón Flotante -> Abrir el Sheet
         fabFilter.setOnClickListener {
             showFilterBottomSheet()
         }
@@ -77,23 +88,47 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        rvMovies.layoutManager = GridLayoutManager(requireContext(), 2)
+        val layoutManager = GridLayoutManager(requireContext(), 2)
+        rvMovies.layoutManager = layoutManager
 
-        // Modificamos la lambda del click:
         adapter = MovieAdapter(emptyList()) { movie ->
-            val intent = Intent(requireContext(), DetailActivity::class.java)
-
-            // Pasamos los datos "desglosados" a través del Intent
-            intent.putExtra("EXTRA_ID", movie.id)
-            intent.putExtra("EXTRA_TITLE", movie.title)
-            intent.putExtra("EXTRA_POSTER", movie.posterPath)
-            intent.putExtra("EXTRA_OVERVIEW", movie.overview)
-            intent.putExtra("EXTRA_RATING", movie.rating)
-            intent.putExtra("EXTRA_DATE", movie.releaseDate)
-
-            startActivity(intent)
+            val fragment = DetailFragment.newInstance(
+                id = movie.id,
+                title = movie.title,
+                poster = movie.posterPath,
+                overview = movie.overview,
+                rating = movie.rating,
+                date = movie.releaseDate
+            )
+            parentFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                    android.R.anim.slide_in_left,
+                    android.R.anim.slide_out_right,
+                    android.R.anim.slide_in_left,
+                    android.R.anim.slide_out_right
+                )
+                .replace(R.id.fragmentContainer, fragment)
+                .addToBackStack(null)
+                .commit()
         }
         rvMovies.adapter = adapter
+
+        rvMovies.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dy <= 0) return
+                val visibleItemCount = layoutManager.childCount
+                val totalItemCount = layoutManager.itemCount
+                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+
+                val threshold = 6 // carga cuando queden ~6 items
+                if (!isLoading && !isLastPage &&
+                    (visibleItemCount + firstVisibleItemPosition + threshold) >= totalItemCount
+                ) {
+                    loadNextPage()
+                }
+            }
+        })
     }
 
     // --- LÓGICA DEL BOTTOM SHEET (Filtros) ---
@@ -108,7 +143,6 @@ class HomeFragment : Fragment() {
         val btnApply = view.findViewById<Button>(R.id.btnSheetApply)
         val btnClear = view.findViewById<Button>(R.id.btnSheetClear)
 
-        // Configurar adaptadores
         val years = mutableListOf("Año")
         years.addAll((2024 downTo 1950).map { it.toString() })
         spYear.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, years)
@@ -120,12 +154,10 @@ class HomeFragment : Fragment() {
         displayGenres.addAll(genreList)
         spGenre.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, displayGenres)
 
-        // Restaurar selección previa
         spYear.setSelection(selectedYearPosition)
         spRating.setSelection(selectedRatingPosition)
         spGenre.setSelection(selectedGenrePosition)
 
-        // Evento Aplicar
         btnApply.setOnClickListener {
             selectedYearPosition = spYear.selectedItemPosition
             selectedRatingPosition = spRating.selectedItemPosition
@@ -136,18 +168,17 @@ class HomeFragment : Fragment() {
             val genreObj = spGenre.selectedItem
             val genreParam = if (genreObj is GenreDto) genreObj.id.toString() else null
 
-            loadMovies(TipoCarga.FILTRO, year = yearParam, rating = ratingParam, genre = genreParam)
+            resetAndLoad(TipoCarga.FILTRO, year = yearParam, rating = ratingParam, genre = genreParam)
             dialog.dismiss()
         }
 
-        // Evento Limpiar
         btnClear.setOnClickListener {
             selectedYearPosition = 0
             selectedRatingPosition = 0
             selectedGenrePosition = 0
 
             etSearch.text.clear()
-            loadMovies(TipoCarga.POPULARES)
+            resetAndLoad(TipoCarga.POPULARES)
             dialog.dismiss()
         }
 
@@ -167,28 +198,60 @@ class HomeFragment : Fragment() {
 
     enum class TipoCarga { POPULARES, BUSQUEDA, FILTRO }
 
-    private fun loadMovies(tipo: TipoCarga, query: String = "", year: String? = null, rating: String? = null, genre: String? = null) {
+    private fun resetAndLoad(tipo: TipoCarga, query: String = "", year: String? = null, rating: String? = null, genre: String? = null) {
+        lastTipo = tipo
+        lastQuery = query
+        lastYear = year
+        lastRating = rating
+        lastGenre = genre
+        isLoading = false
+        isLastPage = false
+        currentPage = 1
+        totalPages = null
+        adapter.setMovies(emptyList())
+        loadMoviesPage(currentPage)
+    }
+
+    private fun loadNextPage() {
+        if (isLoading || isLastPage) return
+        val next = currentPage + 1
+        loadMoviesPage(next)
+    }
+
+    private fun loadMoviesPage(page: Int) {
+        isLoading = true
         lifecycleScope.launch {
             try {
-                val response = when (tipo) {
-                    TipoCarga.POPULARES -> RetrofitClient.instance.getPopularMovies(API_KEY)
-                    TipoCarga.BUSQUEDA -> RetrofitClient.instance.searchMovies(API_KEY, query)
+                val response = when (lastTipo) {
+                    TipoCarga.POPULARES -> RetrofitClient.instance.getPopularMovies(API_KEY, page = page)
+                    TipoCarga.BUSQUEDA -> RetrofitClient.instance.searchMovies(API_KEY, lastQuery, page = page)
                     TipoCarga.FILTRO -> RetrofitClient.instance.discoverMovies(
                         apiKey = API_KEY,
-                        year = year,
-                        minRating = rating,
-                        genreId = genre
+                        year = lastYear,
+                        minRating = lastRating,
+                        genreId = lastGenre,
+                        page = page
                     )
                 }
-                adapter.updateMovies(response.results)
 
-                if (response.results.isEmpty()) {
-                    Toast.makeText(requireContext(), "No se encontraron películas", Toast.LENGTH_SHORT).show()
+                if (page == 1) {
+                    adapter.setMovies(response.results)
+                } else {
+                    adapter.addMovies(response.results)
                 }
 
+                currentPage = page
+                totalPages = response.totalPages ?: totalPages
+                isLastPage = totalPages?.let { currentPage >= it } ?: (response.results.isEmpty())
+
+                if (response.results.isEmpty() && page == 1) {
+                    Toast.makeText(requireContext(), "No se encontraron películas", Toast.LENGTH_SHORT).show()
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
                 Toast.makeText(requireContext(), "Error de conexión", Toast.LENGTH_SHORT).show()
+            } finally {
+                isLoading = false
             }
         }
     }

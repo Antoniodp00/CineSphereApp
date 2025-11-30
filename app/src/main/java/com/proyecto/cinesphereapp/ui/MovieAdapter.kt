@@ -11,9 +11,11 @@ import com.proyecto.cinesphereapp.R
 import com.proyecto.cinesphereapp.model.MovieDto
 
 class MovieAdapter(
-    private var movies: List<MovieDto>,
+    movies: List<MovieDto>,
     private val onMovieClick: (MovieDto) -> Unit // Lambda para manejar clics
 ) : RecyclerView.Adapter<MovieAdapter.MovieViewHolder>() {
+
+    private val items = mutableListOf<MovieDto>().apply { addAll(movies) }
 
     class MovieViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val ivPoster: ImageView = view.findViewById(R.id.ivPoster)
@@ -28,7 +30,7 @@ class MovieAdapter(
     }
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
-        val movie = movies[position]
+        val movie = items[position]
 
         holder.tvTitle.text = movie.title
         holder.tvRating.text = "★ ${movie.rating}"
@@ -44,10 +46,20 @@ class MovieAdapter(
         holder.itemView.setOnClickListener { onMovieClick(movie) }
     }
 
-    override fun getItemCount() = movies.size
+    override fun getItemCount() = items.size
 
-    fun updateMovies(newMovies: List<MovieDto>) {
-        movies = newMovies
+    fun setMovies(newMovies: List<MovieDto>) {
+        items.clear()
+        items.addAll(newMovies)
         notifyDataSetChanged()
     }
+
+    fun addMovies(newMovies: List<MovieDto>) {
+        if (newMovies.isEmpty()) return
+        val start = items.size
+        items.addAll(newMovies)
+        notifyItemRangeInserted(start, newMovies.size)
+    }
+
+    fun getItems(): List<MovieDto> = items
 }

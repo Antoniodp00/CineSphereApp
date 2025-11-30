@@ -11,8 +11,11 @@ import com.proyecto.cinesphereapp.R
 import com.proyecto.cinesphereapp.model.PeliculaLocal
 
 class LocalMovieAdapter(
-    private var movies: List<PeliculaLocal>
+    movies: List<PeliculaLocal>,
+    private val onMovieClick: (PeliculaLocal) -> Unit
 ) : RecyclerView.Adapter<LocalMovieAdapter.ViewHolder>() {
+
+    private val items = mutableListOf<PeliculaLocal>().apply { addAll(movies) }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val ivPoster: ImageView = view.findViewById(R.id.ivPoster)
@@ -27,7 +30,7 @@ class LocalMovieAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val movie = movies[position]
+        val movie = items[position]
 
         holder.tvTitle.text = movie.titulo
         // En lugar de estrellas, mostramos el estado
@@ -40,7 +43,26 @@ class LocalMovieAdapter(
             .load(imageUrl)
             .placeholder(android.R.drawable.ic_menu_gallery)
             .into(holder.ivPoster)
+
+        holder.itemView.setOnClickListener {
+            onMovieClick(movie)
+        }
     }
 
-    override fun getItemCount() = movies.size
+    fun setList(newList: List<PeliculaLocal>) {
+        items.clear()
+        items.addAll(newList)
+        notifyDataSetChanged()
+    }
+
+    fun addMovies(newItems: List<PeliculaLocal>) {
+        if (newItems.isEmpty()) return
+        val start = items.size
+        items.addAll(newItems)
+        notifyItemRangeInserted(start, newItems.size)
+    }
+
+    fun getItems(): List<PeliculaLocal> = items
+
+    override fun getItemCount() = items.size
 }

@@ -7,17 +7,20 @@ import retrofit2.http.Query
 
 interface TmdbApiService {
 
-    // ... (Tus métodos existentes getPopularMovies y searchMovies se quedan igual) ...
     @GET("movie/popular")
-    suspend fun getPopularMovies(@Query("api_key") apiKey: String): MovieResponse
+    suspend fun getPopularMovies(
+        @Query("api_key") apiKey: String,
+        @Query("page") page: Int = 1,
+        @Query("language") language: String = "es-ES"
+    ): MovieResponse
 
     @GET("search/movie")
     suspend fun searchMovies(
         @Query("api_key") apiKey: String,
-        @Query("query") query: String
+        @Query("query") query: String,
+        @Query("page") page: Int = 1,
+        @Query("language") language: String = "es-ES"
     ): MovieResponse
-
-    // --- NUEVOS MÉTODOS PARA FILTROS ---
 
     // 1. Obtener lista de géneros para el desplegable
     @GET("genre/movie/list")
@@ -33,6 +36,7 @@ interface TmdbApiService {
         @Query("language") language: String = "es-ES",
         @Query("primary_release_year") year: String?,
         @Query("vote_average.gte") minRating: String?, // Greater than or equal
-        @Query("with_genres") genreId: String?
+        @Query("with_genres") genreId: String?,
+        @Query("page") page: Int = 1
     ): MovieResponse
 }

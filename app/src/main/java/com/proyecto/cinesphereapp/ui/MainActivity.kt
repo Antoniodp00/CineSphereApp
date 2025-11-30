@@ -1,6 +1,7 @@
 package com.proyecto.cinesphereapp.ui
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -8,11 +9,13 @@ import com.proyecto.cinesphereapp.R
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var bottomNav: BottomNavigationView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
+        bottomNav = findViewById(R.id.bottomNav)
 
         // Cargar el fragmento de INICIO (Explorar) por defecto al abrir la app
         if (savedInstanceState == null) {
@@ -27,10 +30,14 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_stats -> StatsFragment()    // Estadísticas
                 R.id.nav_settings -> SettingsFragment() // Ajustes
                 else -> HomeFragment()
-            } as Fragment
+            }
             loadFragment(fragment)
             true
         }
+    }
+
+    fun showBottomNav(show: Boolean) {
+        bottomNav.visibility = if (show) View.VISIBLE else View.GONE
     }
 
     /**

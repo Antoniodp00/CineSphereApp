@@ -1,6 +1,7 @@
 package com.proyecto.cinesphereapp.ui
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,46 +15,137 @@ import com.proyecto.cinesphereapp.data.db.MiListaDao
 
 class MyListFragment : Fragment() {
 
+    private lateinit var rv: RecyclerView
+    private var tvEmpty: TextView? = null
+    private lateinit var adapter: LocalMovieAdapter
+
+    private var isLoading = false
+    private var isLastPage = false
+    private var pageSize = 20
+    private var currentOffset = 0
+
+    private var userId: Int = -1
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflamos el layout específico para este fragmento
         return inflater.inflate(R.layout.activity_my_list_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val rv = view.findViewById<RecyclerView>(R.id.rvLocalMovies)
-        // Asegúrate de que tu XML tiene un TextView con id tvEmpty para mostrar mensaje si no hay pelis
-        // Si no lo tienes en el XML que subiste, puedes quitar estas líneas del tvEmpty por ahora
-        val tvEmpty = view.findViewById<TextView>(R.id.tvEmpty)
+        rv = view.findViewById(R.id.rvLocalMovies)
+        tvEmpty = view.findViewById(R.id.tvEmpty)
 
-        rv.layoutManager = GridLayoutManager(context, 2)
+        val layoutManager = GridLayoutManager(context, 2)
+        rv.layoutManager = layoutManager
 
-        // 1. Obtener ID del usuario actual desde SharedPreferences
+        // Obtener ID del usuario actual
         val prefs = requireContext().getSharedPreferences("CineSpherePrefs", Context.MODE_PRIVATE)
-        val userId = prefs.getInt("USER_ID", -1)
+        userId = prefs.getInt("USER_ID", -1)
 
-        // 2. Consultar base de datos
-        val dao = MiListaDao(requireContext())
-        val lista = dao.obtenerListaUsuario(userId)
+        // Estado inicial
+        tvEmpty?.text = getString(R.string.loading)
+        tvEmpty?.visibility = View.VISIBLE
+        rv.visibility = View.GONE
 
-        // 3. Mostrar datos o mensaje de vacío
-        if (lista.isEmpty()) {
-            rv.visibility = View.GONE
-            tvEmpty?.visibility = View.VISIBLE
-        } else {
-            rv.visibility = View.VISIBLE
-            tvEmpty?.visibility = View.GONE
-            rv.adapter = LocalMovieAdapter(lista)
+        if (userId == -1) {
+            tvEmpty?.text = getString(R.string.login_first)
+            return
         }
+
+        adapter = LocalMovieAdapter(emptyList()) { movie ->
+            val fragment = LocalDetailFragment.newInstance(
+                id = movie.id,
+                title = movie.titulo,
+                poster = movie.posterPath,
+                status = movie.estado
+            )
+            parentFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                    android.R.anim.slide_in_left,
+                    android.R.anim.slide_out_right,
+                    android.R.anim.slide_in_left,
+                    android.R.anim.slide_out_right
+                )
+                .replace(R.id.fragmentContainer, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
+        rv.adapter = adapter
+
+        // Endless scroll listener
+        rv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dy <= 0) return
+                val visibleItemCount = layoutManager.childCount
+                val totalItemCount = layoutManager.itemCount
+                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+                val threshold = 6
+                if (!isLoading && !isLastPage &&
+                    (visibleItemCount + firstVisibleItemPosition + threshold) >= totalItemCount
+                ) {
+                    loadNextPage()
+                }
+            }
+        })
+
+        // Primera carga
+        resetAndLoad()
     }
 
-    // Método para recargar la lista si volvemos a esta pantalla (opcional pero recomendado)
+    private fun resetAndLoad() {
+        isLoading = false
+        isLastPage = false
+        currentOffset = 0
+        adapter.setList(emptyList())
+        loadPage(0)
+    }
+
+    private fun loadNextPage() {
+        if (isLoading || isLastPage) return
+        loadPage(currentOffset)
+    }
+
+    private fun loadPage(offset: Int) {
+        isLoading = true
+        Thread {
+            val dao = MiListaDao(requireContext())
+            val chunk = dao.obtenerListaUsuarioPaginado(userId, pageSize, offset)
+
+            requireActivity().runOnUiThread {
+                try {
+                    if (offset == 0) {
+                        if (chunk.isEmpty()) {
+                            rv.visibility = View.GONE
+                            tvEmpty?.text = getString(R.string.no_items)
+                            tvEmpty?.visibility = View.VISIBLE
+                            isLastPage = true
+                        } else {
+                            rv.visibility = View.VISIBLE
+                            tvEmpty?.visibility = View.GONE
+                            adapter.setList(chunk)
+                            currentOffset += chunk.size
+                            if (chunk.size < pageSize) isLastPage = true
+                        }
+                    } else {
+                        adapter.addMovies(chunk)
+                        currentOffset += chunk.size
+                        if (chunk.size < pageSize) isLastPage = true
+                    }
+                } finally {
+                    isLoading = false
+                }
+            }
+        }.start()
+    }
+
     override fun onResume() {
         super.onResume()
-        // Aquí podrías volver a llamar a la carga de datos si quieres que se actualice al volver
+        // Refresca al volver por si se actualizó o eliminó algo en el detalle
+        resetAndLoad()
     }
 }

@@ -13,30 +13,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CineSphereApp">
-        <activity
-            android:name=".ui.DetailActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.SettingsFragment"
-            android:exported="false" />
-        <activity
-            android:name=".ui.StatsFragment"
-            android:exported="false" />
-        <activity
-            android:name=".ui.HomeFragment"
-            android:exported="false" />
-        <activity
-            android:name=".ui.MyListFragment"
-            android:exported="false" />
+
         <activity
             android:name=".ui.MainActivity"
             android:exported="false" />
+
         <activity
             android:name=".ui.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

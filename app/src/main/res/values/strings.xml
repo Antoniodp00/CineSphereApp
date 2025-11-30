@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">CineSphereApp</string>
+    <string name="loading">Cargando…</string>
+    <string name="login_first">Inicia sesión para ver tu lista.</string>
+    <string name="no_items">No tienes películas guardadas aún.</string>
+
+    <!-- Detail strings -->
+    <string name="unknown_date">Fecha desconocida</string>
+    <string name="no_overview">Sin descripción disponible.</string>
+    <string name="add_to_list">Añadir a Mi Lista</string>
+    <string name="remove_from_list">Eliminar de Mi Lista</string>
+    <string name="saved_to_favs">Guardada en favoritos</string>
+    <string name="error_saving">Error al guardar</string>
+    <string name="removed_from_favs">Eliminada de favoritos</string>
 </resources>

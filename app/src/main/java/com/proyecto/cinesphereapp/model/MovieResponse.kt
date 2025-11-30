@@ -4,6 +4,8 @@ import com.google.gson.annotations.SerializedName
 
 // La respuesta principal que envuelve la lista
 data class MovieResponse(
+    @SerializedName("page") val page: Int? = null,
+    @SerializedName("total_pages") val totalPages: Int? = null,
     @SerializedName("results") val results: List<MovieDto>
 )
 
