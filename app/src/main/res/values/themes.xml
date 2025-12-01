@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Tema Principal de la Aplicación (Claro) -->
-    <style name="Theme.CineSphere" parent="Theme.Material3.Light.NoActionBar">
+    <!-- Tema Principal de la Aplicación (se fuerza el oscuro para consistencia) -->
+    <style name="Theme.CineSphere" parent="Theme.Material3.Dark.NoActionBar">
         <!-- Mapeo de Colores Primarios -->
         <item name="colorPrimary">@color/cine_primary</item>
         <item name="colorPrimaryVariant">@color/cine_primary</item>

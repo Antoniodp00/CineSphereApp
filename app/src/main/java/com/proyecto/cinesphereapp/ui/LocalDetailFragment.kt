@@ -81,7 +81,6 @@ class LocalDetailFragment : Fragment() {
      */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as? MainActivity)?.showBottomNav(false)
 
         val title = requireArguments().getString(ARG_TITLE) ?: ""
         val posterPath = requireArguments().getString(ARG_POSTER) ?: ""
@@ -124,7 +123,6 @@ class LocalDetailFragment : Fragment() {
      */
     override fun onResume() {
         super.onResume()
-        (activity as? MainActivity)?.showBottomNav(false)
     }
 
     /**
@@ -132,7 +130,6 @@ class LocalDetailFragment : Fragment() {
      */
     override fun onDestroyView() {
         super.onDestroyView()
-        (activity as? MainActivity)?.showBottomNav(true)
     }
 
     /**

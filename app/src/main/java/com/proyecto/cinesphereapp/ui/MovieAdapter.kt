@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.proyecto.cinesphereapp.R
 import com.proyecto.cinesphereapp.model.MovieDto
+import java.lang.String
 
 /**
  * Adaptador para el RecyclerView que muestra una lista de películas.
@@ -53,14 +54,18 @@ class MovieAdapter(
         val movie = items[position]
 
         holder.tvTitle.text = movie.title
-        holder.tvRating.text = "★ ${"$"}{movie.rating}"
+        holder.tvRating.text = String.format("★ %.1f", movie.rating)
 
-        // Cargar imagen con Glide
-        val imageUrl = "https://image.tmdb.org/t/p/w500${"$"}{movie.posterPath}"
-        Glide.with(holder.itemView.context)
-            .load(imageUrl)
-            .placeholder(android.R.drawable.ic_menu_gallery) // Imagen mientras carga
-            .into(holder.ivPoster)
+        if (movie.posterPath.isNullOrBlank()) {
+            holder.ivPoster.setImageResource(android.R.drawable.ic_menu_gallery)
+        } else {
+            val imageUrl = "https://image.tmdb.org/t/p/w500${movie.posterPath}"
+            Glide.with(holder.itemView.context)
+                .load(imageUrl)
+                .placeholder(android.R.drawable.ic_menu_gallery)
+                .error(android.R.drawable.ic_menu_gallery)
+                .into(holder.ivPoster)
+        }
 
         // Evento click
         holder.itemView.setOnClickListener { onMovieClick(movie) }

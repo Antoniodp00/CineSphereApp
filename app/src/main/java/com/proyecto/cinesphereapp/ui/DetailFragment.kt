@@ -105,25 +105,28 @@ class DetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Ocultar bottom nav
-        (activity as? MainActivity)?.showBottomNav(false)
-
         val ivPoster = view.findViewById<ImageView>(R.id.ivDetailPoster)
         val tvTitle = view.findViewById<TextView>(R.id.tvDetailTitle)
         val tvRating = view.findViewById<TextView>(R.id.tvDetailRating)
         val tvDate = view.findViewById<TextView>(R.id.tvDetailDate)
         val tvOverview = view.findViewById<TextView>(R.id.tvDetailOverview)
-        btnAddList = view.findViewById(R.id.btnAddList)
+        btnAddList = view.findViewById<Button>(R.id.btnAddList)
 
         tvTitle.text = vm.movieTitle
-        tvRating.text = "★ ${'$'}{vm.movieRating}"
+        tvRating.text = String.format("★ %.1f", vm.movieRating)
         tvDate.text = vm.movieDate ?: getString(R.string.unknown_date)
         tvOverview.text = vm.movieOverview ?: getString(R.string.no_overview)
 
-        Glide.with(this)
-            .load("https://image.tmdb.org/t/p/w500${'$'}{vm.moviePoster}")
-            .placeholder(android.R.drawable.ic_menu_gallery)
-            .into(ivPoster)
+        if (vm.moviePoster.isNullOrBlank()) {
+            ivPoster.setImageResource(android.R.drawable.ic_menu_gallery)
+        } else {
+            val imageUrl = "https://image.tmdb.org/t/p/w500${vm.moviePoster}"
+            Glide.with(this)
+                .load(imageUrl)
+                .placeholder(android.R.drawable.ic_menu_gallery)
+                .error(android.R.drawable.ic_menu_gallery) // Añadir fallback de error
+                .into(ivPoster)
+        }
 
         // Estado inicial
         if (!vm.knownAddedState) {
@@ -142,7 +145,6 @@ class DetailFragment : Fragment() {
      */
     override fun onResume() {
         super.onResume()
-        (activity as? MainActivity)?.showBottomNav(false)
     }
 
     /**
@@ -150,7 +152,6 @@ class DetailFragment : Fragment() {
      */
     override fun onDestroyView() {
         super.onDestroyView()
-        (activity as? MainActivity)?.showBottomNav(true)
     }
 
     /**
@@ -214,20 +215,4 @@ class DetailFragment : Fragment() {
             }
         }.start()
     }
-}
-
-/**
- * ViewModel para DetailFragment. Almacena los detalles de la película y el estado de la interfaz de usuario.
- */
-class DetailViewModel : ViewModel() {
-    var initialized: Boolean = false
-    var movieId: Int = 0
-    var movieTitle: String = ""
-    var moviePoster: String = ""
-    var movieOverview: String? = null
-    var movieRating: Double = 0.0
-    var movieDate: String? = null
-
-    var isAdded: Boolean = false
-    var knownAddedState: Boolean = false
 }
