@@ -3,12 +3,10 @@ package com.proyecto.cinesphereapp.ui
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
-import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-
-
+import com.google.android.material.textfield.TextInputEditText
 import com.proyecto.cinesphereapp.R
 import com.proyecto.cinesphereapp.data.db.UsuarioDao
 
@@ -32,8 +30,8 @@ class LoginActivity : AppCompatActivity() {
 
         usuarioDao = UsuarioDao(this)
 
-        val etUser = findViewById<EditText>(R.id.etLoginUser)
-        val etPass = findViewById<EditText>(R.id.etLoginPass)
+        val etUser = findViewById<TextInputEditText>(R.id.etLoginUser)
+        val etPass = findViewById<TextInputEditText>(R.id.etLoginPass)
         val btnLogin = findViewById<Button>(R.id.btnLogin)
         val tvRegister = findViewById<TextView>(R.id.tvGoToRegister)
 

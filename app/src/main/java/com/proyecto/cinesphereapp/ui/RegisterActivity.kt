@@ -2,9 +2,9 @@ package com.proyecto.cinesphereapp.ui
 
 import android.os.Bundle
 import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.textfield.TextInputEditText
 import com.proyecto.cinesphereapp.R
 import com.proyecto.cinesphereapp.data.db.UsuarioDao
 
@@ -28,9 +28,9 @@ class RegisterActivity : AppCompatActivity() {
         // Inicializamos el DAO
         usuarioDao = UsuarioDao(this)
 
-        val etUser = findViewById<EditText>(R.id.etRegUser)
-        val etEmail = findViewById<EditText>(R.id.etRegEmail)
-        val etPass = findViewById<EditText>(R.id.etRegPass)
+        val etUser = findViewById<TextInputEditText>(R.id.etRegUser)
+        val etEmail = findViewById<TextInputEditText>(R.id.etRegEmail)
+        val etPass = findViewById<TextInputEditText>(R.id.etRegPass)
         val btnRegister = findViewById<Button>(R.id.btnDoRegister)
 
         btnRegister.setOnClickListener {
