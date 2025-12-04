@@ -57,4 +57,6 @@ dependencies {
     // 3. CORRUTINAS (Para hacer cosas en segundo plano sin bloquear la app)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
+
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }
