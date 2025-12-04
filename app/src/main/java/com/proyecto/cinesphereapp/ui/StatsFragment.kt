@@ -38,12 +38,19 @@ class StatsFragment : Fragment() {
     private lateinit var dao: MiListaDao
     private var userId: Int = -1
 
+    /**
+     * Infla el layout del fragmento.
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.activity_stats_fragment, container, false)
     }
 
+    /**
+     * Se llama después de que la vista del fragmento ha sido creada.
+     * Inicializa las vistas, la base de datos y carga los datos del gráfico.
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -66,6 +73,9 @@ class StatsFragment : Fragment() {
         }
     }
 
+    /**
+     * Define y devuelve una lista de colores para el gráfico de tarta.
+     */
     private fun configuringColors(): List<Int> {
         // Colores personalizados para cada estado
         return listOf(
@@ -76,6 +86,9 @@ class StatsFragment : Fragment() {
         )
     }
 
+    /**
+     * Configura las propiedades visuales del gráfico de tarta.
+     */
     private fun configurarGrafico() {
         pieChart.isDrawHoleEnabled = true
         pieChart.setHoleColor(Color.TRANSPARENT)
@@ -93,6 +106,9 @@ class StatsFragment : Fragment() {
         pieChart.setCenterTextColor(Color.WHITE)
     }
 
+    /**
+     * Carga los datos de las películas desde la base de datos y los muestra en el gráfico de tarta.
+     */
     private fun cargarDatosGrafico() {
         lifecycleScope.launch(Dispatchers.IO) {
             // 1. Obtener datos de la BD SQLite
@@ -129,6 +145,9 @@ class StatsFragment : Fragment() {
         }
     }
 
+    /**
+     * Guarda el gráfico actual como una imagen en la galería del dispositivo.
+     */
     private fun guardarGraficaEnGaleria() {
         // Obtenemos el Bitmap del gráfico
         val bitmap = pieChart.chartBitmap
@@ -166,6 +185,10 @@ class StatsFragment : Fragment() {
         }
     }
 
+    /**
+     * Se llama cuando el fragmento se vuelve visible.
+     * Recarga los datos del gráfico.
+     */
     override fun onResume() {
         super.onResume()
         if (userId != -1) cargarDatosGrafico()
